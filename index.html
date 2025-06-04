@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grow A Garden Stock Tracker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <title>Grow A Garden - Stock Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #4CAF50;
             --primary-dark: #388E3C;
-            --secondary: #FFC107;
-            --dark: #2E2E2E;
-            --light: #F5F5F5;
+            --secondary: #FF9800;
+            --dark: #333;
+            --light: #f9f9f9;
+            --gray: #e0e0e0;
             --danger: #F44336;
-            --info: #2196F3;
+            --warning: #FFC107;
         }
         
         * {
@@ -24,7 +26,7 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f9f9f9;
+            background-color: #f5f5f5;
             color: var(--dark);
             line-height: 1.6;
         }
@@ -39,393 +41,560 @@
             background-color: var(--primary);
             color: white;
             padding: 20px 0;
-            text-align: center;
-            border-radius: 0 0 10px 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 30px;
         }
         
-        h1 {
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 700;
-            font-size: 2.5rem;
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .subtitle {
-            font-weight: 300;
-            opacity: 0.9;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .last-updated {
+            background-color: var(--primary-dark);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .refresh-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .refresh-btn:hover {
+            background-color: #F57C00;
         }
         
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-        
-        .card-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .card-icon {
-            font-size: 1.8rem;
-            margin-right: 10px;
-        }
-        
-        .card-title {
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 600;
-            font-size: 1.3rem;
-            color: var(--primary-dark);
-        }
-        
-        .item-list {
-            list-style: none;
-        }
-        
-        .item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px dashed #eee;
-        }
-        
-        .item:last-child {
-            border-bottom: none;
-        }
-        
-        .item-name {
-            font-weight: 500;
-        }
-        
-        .item-quantity {
-            color: var(--primary-dark);
-            font-weight: 600;
-        }
-        
-        .weather-card {
-            background: linear-gradient(135deg, #64B5F6, #1976D2);
-            color: white;
-        }
-        
-        .weather-card .card-title {
-            color: white;
-        }
-        
-        .weather-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .weather-icon {
-            font-size: 3rem;
-            margin-right: 20px;
-        }
-        
-        .weather-desc {
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-        
-        .weather-details {
-            display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        
-        .weather-detail {
-            background: rgba(255,255,255,0.2);
-            padding: 10px;
-            border-radius: 5px;
-        }
-        
-        .detail-label {
-            font-size: 0.8rem;
-            opacity: 0.8;
-        }
-        
-        .detail-value {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        .reset-timer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-        
-        .timer {
-            text-align: center;
-        }
-        
-        .timer-label {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .timer-value {
-            font-weight: 600;
-            font-size: 1.2rem;
-            color: var(--primary);
-        }
-        
-        .last-updated {
-            text-align: right;
-            font-size: 0.8rem;
-            color: #999;
-            margin-top: 30px;
+            gap: 20px;
+            margin-bottom: 30px;
         }
         
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
             }
-            
-            .weather-details {
-                grid-template-columns: 1fr;
-            }
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-header h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .weather-card .card-header {
+            background-color: var(--secondary);
+        }
+        
+        .stock-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .stock-item {
+            background-color: var(--light);
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .stock-item.gear {
+            border-left-color: #2196F3;
+        }
+        
+        .stock-item.seeds {
+            border-left-color: #8BC34A;
+        }
+        
+        .stock-item.egg {
+            border-left-color: #9C27B0;
+        }
+        
+        .stock-item.cosmetics {
+            border-left-color: #E91E63;
+        }
+        
+        .stock-item .quantity {
+            background-color: var(--gray);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .weather-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .weather-icon {
+            font-size: 3rem;
+            width: 80px;
+            height: 80px;
+            background-color: #FFF8E1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .weather-details {
+            flex: 1;
+        }
+        
+        .weather-details h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .weather-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .stat-item h4 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-item p {
+            font-weight: 500;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transform: translateX(200%);
+            transition: transform 0.3s ease-out;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1>Grow A Garden Tracker</h1>
-            <p class="subtitle">Real-time stock and weather updates</p>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <h1>Grow A Garden Tracker</h1>
+            </div>
+            <div class="last-updated">
+                <i class="fas fa-clock"></i>
+                <span id="lastUpdated">Updating...</span>
+            </div>
         </div>
     </header>
     
     <div class="container">
+        <button class="refresh-btn" id="refreshBtn">
+            <i class="fas fa-sync-alt"></i>
+            Refresh Data
+        </button>
+        
         <div class="dashboard">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">🛠️</div>
-                    <h2 class="card-title">Gear</h2>
-                </div>
-                <ul class="item-list" id="gear-list">
-                    <!-- Filled by JavaScript -->
-                </ul>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">🌱</div>
-                    <h2 class="card-title">Seeds</h2>
-                </div>
-                <ul class="item-list" id="seeds-list">
-                    <!-- Filled by JavaScript -->
-                </ul>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">🥚</div>
-                    <h2 class="card-title">Eggs</h2>
-                </div>
-                <ul class="item-list" id="eggs-list">
-                    <!-- Filled by JavaScript -->
-                </ul>
-            </div>
-            
             <div class="card weather-card">
                 <div class="card-header">
-                    <div class="card-icon">☀️</div>
-                    <h2 class="card-title">Weather</h2>
+                    <h2><i class="fas fa-cloud-sun"></i> Current Weather</h2>
                 </div>
-                
-                <div class="weather-info">
-                    <div class="weather-icon" id="weather-icon">☀️</div>
-                    <div>
-                        <div class="weather-desc" id="weather-desc">Rain Ended</div>
-                        <div id="weather-visual">Weather is returning to normal.</div>
-                    </div>
-                </div>
-                
-                <div class="weather-details">
-                    <div class="weather-detail">
-                        <div class="detail-label">Crop Bonus</div>
-                        <div class="detail-value" id="weather-bonus">Standard growth</div>
-                    </div>
-                    <div class="weather-detail">
-                        <div class="detail-label">Rarity</div>
-                        <div class="detail-value" id="weather-rarity">Most common (≈ every 20 min)</div>
+                <div class="card-body" id="weatherData">
+                    <div class="loading">
+                        <div class="spinner"></div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="reset-timer">
-            <div class="timer">
-                <div class="timer-label">Gear/Seed Reset</div>
-                <div class="timer-value" id="gear-reset">5m 0s</div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-egg"></i> Eggs in Stock</h2>
+                </div>
+                <div class="card-body" id="eggData">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
             </div>
-            <div class="timer">
-                <div class="timer-label">Egg Reset</div>
-                <div class="timer-value" id="egg-reset">10m 0s</div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-tools"></i> Gear & Seeds</h2>
+                </div>
+                <div class="card-body" id="gearSeedsData">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <div class="last-updated">
-            Last updated: <span id="last-updated">Loading...</span>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-paint-brush"></i> Cosmetic Items</h2>
+                </div>
+                <div class="card-body" id="cosmeticsData">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
+    <footer>
+        <p>Grow A Garden Tracker &copy; 2023 | Data updates every 30 seconds | Not affiliated with Roblox</p>
+    </footer>
+    
+    <div class="notification" id="notification">
+        Data refreshed successfully!
+    </div>
+    
     <script>
-        // DOM elements
-        const gearList = document.getElementById('gear-list');
-        const seedsList = document.getElementById('seeds-list');
-        const eggsList = document.getElementById('eggs-list');
-        const weatherIcon = document.getElementById('weather-icon');
-        const weatherDesc = document.getElementById('weather-desc');
-        const weatherVisual = document.getElementById('weather-visual');
-        const weatherBonus = document.getElementById('weather-bonus');
-        const weatherRarity = document.getElementById('weather-rarity');
-        const gearReset = document.getElementById('gear-reset');
-        const eggReset = document.getElementById('egg-reset');
-        const lastUpdated = document.getElementById('last-updated');
+        // DOM Elements
+        const lastUpdatedEl = document.getElementById('lastUpdated');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const weatherDataEl = document.getElementById('weatherData');
+        const eggDataEl = document.getElementById('eggData');
+        const gearSeedsDataEl = document.getElementById('gearSeedsData');
+        const cosmeticsDataEl = document.getElementById('cosmeticsData');
+        const notificationEl = document.getElementById('notification');
         
-        // Format time to PH timezone
-        function getPHTime(timestamp) {
-            return new Date(timestamp).toLocaleString("en-PH", {
-                timeZone: "Asia/Manila",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true,
-                weekday: "short",
+        // API Endpoints
+        const API_ENDPOINTS = {
+            weather: 'https://growagardenstock.com/api/stock/weather?ts=',
+            egg: 'https://growagardenstock.com/api/stock?type=egg&ts=',
+            gearSeeds: 'https://growagardenstock.com/api/stock?type=gear-seeds&ts=',
+            cosmetics: 'https://growagardenstock.com/api/special-stock?type=cosmetics&ts=',
+            bloodTwilight: 'https://growagardenstock.com/api/special-stock?type=blood-twilight&ts='
+        };
+        
+        // Format timestamp
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return 'Just now';
+            const date = new Date(timestamp);
+            return date.toLocaleString();
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            notificationEl.textContent = message;
+            notificationEl.classList.add('show');
+            setTimeout(() => {
+                notificationEl.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Parse item quantity (e.g., "Common Egg **x1**" => {name: "Common Egg", quantity: "x1"})
+        function parseItem(item) {
+            const parts = item.split('**');
+            return {
+                name: parts[0].trim(),
+                quantity: parts[1] || ''
+            };
+        }
+        
+        // Render weather data
+        function renderWeather(data) {
+            if (!data) {
+                weatherDataEl.innerHTML = '<div class="empty-state"><i class="fas fa-cloud"></i><p>No weather data available</p></div>';
+                return;
+            }
+            
+            weatherDataEl.innerHTML = `
+                <div class="weather-info">
+                    <div class="weather-icon">${data.icon || '☀️'}</div>
+                    <div class="weather-details">
+                        <h3>${data.currentWeather || 'Normal Weather'}</h3>
+                        <p>${data.description || 'Standard growth conditions'}</p>
+                    </div>
+                </div>
+                <div class="weather-stats">
+                    <div class="stat-item">
+                        <h4>Visual Cue</h4>
+                        <p>${data.visualCue || 'None'}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Crop Bonuses</h4>
+                        <p>${data.cropBonuses || 'Standard growth'}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Rarity</h4>
+                        <p>${data.rarity || 'Common'}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Effect</h4>
+                        <p>${data.effectDescription || 'No special effects'}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Render egg data
+        function renderEggs(data) {
+            if (!data || !data.egg || data.egg.length === 0) {
+                eggDataEl.innerHTML = '<div class="empty-state"><i class="fas fa-egg"></i><p>No eggs in stock</p></div>';
+                return;
+            }
+            
+            const eggs = data.egg.map(item => parseItem(item));
+            const eggCounts = {};
+            
+            // Count duplicate eggs
+            eggs.forEach(egg => {
+                if (eggCounts[egg.name]) {
+                    eggCounts[egg.name] += egg.quantity ? parseInt(egg.quantity.replace('x', '')) : 1;
+                } else {
+                    eggCounts[egg.name] = egg.quantity ? parseInt(egg.quantity.replace('x', '')) : 1;
+                }
             });
-        }
-        
-        // Format reset timer
-        function formatResetTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins}m ${secs}s`;
-        }
-        
-        // Update the UI with new data
-        function updateUI(data) {
-            // Update gear
-            gearList.innerHTML = data.gear.map(item => {
-                const [name, quantity] = item.split(' **x');
-                return `
-                    <li class="item">
-                        <span class="item-name">${name}</span>
-                        <span class="item-quantity">x${quantity.replace('**', '')}</span>
-                    </li>
+            
+            let html = '<div class="stock-list">';
+            Object.keys(eggCounts).forEach(eggName => {
+                html += `
+                    <div class="stock-item egg">
+                        <span>${eggName}</span>
+                        <span class="quantity">x${eggCounts[eggName]}</span>
+                    </div>
                 `;
-            }).join('');
+            });
+            html += '</div>';
             
-            // Update seeds
-            seedsList.innerHTML = data.seeds.map(item => {
-                const [name, quantity] = item.split(' **x');
-                return `
-                    <li class="item">
-                        <span class="item-name">${name}</span>
-                        <span class="item-quantity">x${quantity.replace('**', '')}</span>
-                    </li>
-                `;
-            }).join('');
-            
-            // Update eggs
-            eggsList.innerHTML = data.egg.map(item => {
-                const [name, quantity] = item.split(' **x');
-                return `
-                    <li class="item">
-                        <span class="item-name">${name}</span>
-                        <span class="item-quantity">x${quantity.replace('**', '')}</span>
-                    </li>
-                `;
-            }).join('');
-            
-            // Update weather
-            weatherIcon.textContent = data.weather.icon || '🌦️';
-            weatherDesc.textContent = data.weather.currentWeather || 'Unknown';
-            weatherVisual.textContent = data.weather.visualCue || 'N/A';
-            weatherBonus.textContent = data.weather.cropBonuses || 'N/A';
-            weatherRarity.textContent = data.weather.rarity || 'N/A';
-            
-            // Update timers
-            updateTimers(data);
-            
-            // Update last updated time
-            const now = new Date();
-            lastUpdated.textContent = getPHTime(now.getTime());
+            eggDataEl.innerHTML = html;
         }
         
-        // Update reset timers
-        function updateTimers(data) {
-            const now = Date.now();
+        // Render gear and seeds data
+        function renderGearSeeds(data) {
+            if ((!data.gear || data.gear.length === 0) && (!data.seeds || data.seeds.length === 0)) {
+                gearSeedsDataEl.innerHTML = '<div class="empty-state"><i class="fas fa-seedling"></i><p>No gear or seeds in stock</p></div>';
+                return;
+            }
             
-            // Gear reset (5 minutes)
-            const gearResetTime = Math.max(300 - Math.floor((now - data.gearSeed.updatedAt) / 1000), 0);
-            gearReset.textContent = formatResetTime(gearResetTime);
+            let html = '<div class="stock-list">';
             
-            // Egg reset (10 minutes)
-            const eggResetTime = Math.max(600 - Math.floor((now - data.egg.updatedAt) / 1000), 0);
-            eggReset.textContent = formatResetTime(eggResetTime);
+            // Render gear
+            if (data.gear && data.gear.length > 0) {
+                const gearItems = data.gear.map(item => parseItem(item));
+                gearItems.forEach(item => {
+                    html += `
+                        <div class="stock-item gear">
+                            <span>${item.name}</span>
+                            <span class="quantity">${item.quantity || 'x1'}</span>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Render seeds
+            if (data.seeds && data.seeds.length > 0) {
+                const seedItems = data.seeds.map(item => parseItem(item));
+                seedItems.forEach(item => {
+                    html += `
+                        <div class="stock-item seeds">
+                            <span>${item.name}</span>
+                            <span class="quantity">${item.quantity || 'x1'}</span>
+                        </div>
+                    `;
+                });
+            }
+            
+            html += '</div>';
+            gearSeedsDataEl.innerHTML = html;
         }
         
-        // Fetch all data from APIs
-        async function fetchAllData() {
+        // Render cosmetics data
+        function renderCosmetics(data) {
+            if (!data || !data.cosmetics || data.cosmetics.length === 0) {
+                cosmeticsDataEl.innerHTML = '<div class="empty-state"><i class="fas fa-paint-brush"></i><p>No cosmetic items in stock</p></div>';
+                return;
+            }
+            
+            const cosmeticItems = data.cosmetics.map(item => parseItem(item));
+            
+            let html = '<div class="stock-list">';
+            cosmeticItems.forEach(item => {
+                html += `
+                    <div class="stock-item cosmetics">
+                        <span>${item.name}</span>
+                        <span class="quantity">${item.quantity || 'x1'}</span>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            cosmeticsDataEl.innerHTML = html;
+        }
+        
+        // Fetch data from API
+        async function fetchData() {
             try {
-                const [gearSeedRes, eggRes, weatherRes] = await Promise.all([
-                    fetch("https://growagardenstock.com/api/stock?type=gear-seeds").then(res => res.json()),
-                    fetch("https://growagardenstock.com/api/stock?type=egg").then(res => res.json()),
-                    fetch("https://growagardenstock.com/api/stock/weather").then(res => res.json())
+                const timestamp = Date.now();
+                lastUpdatedEl.textContent = 'Updating...';
+                
+                // Fetch all data in parallel
+                const [weatherRes, eggRes, gearSeedsRes, cosmeticsRes] = await Promise.all([
+                    fetch(`${API_ENDPOINTS.weather}${timestamp}`),
+                    fetch(`${API_ENDPOINTS.egg}${timestamp}`),
+                    fetch(`${API_ENDPOINTS.gearSeeds}${timestamp}`),
+                    fetch(`${API_ENDPOINTS.cosmetics}${timestamp}`)
                 ]);
                 
-                return {
-                    gearSeed: gearSeedRes,
-                    egg: eggRes,
-                    weather: weatherRes
-                };
+                const [weatherData, eggData, gearSeedsData, cosmeticsData] = await Promise.all([
+                    weatherRes.json(),
+                    eggRes.json(),
+                    gearSeedsRes.json(),
+                    cosmeticsRes.json()
+                ]);
+                
+                // Update last updated time
+                const updateTime = Math.max(
+                    weatherData.updatedAt || 0,
+                    eggData.updatedAt || 0,
+                    gearSeedsData.updatedAt || 0,
+                    cosmeticsData.updatedAt || 0
+                );
+                lastUpdatedEl.textContent = formatTimestamp(updateTime);
+                
+                // Render data
+                renderWeather(weatherData);
+                renderEggs(eggData);
+                renderGearSeeds(gearSeedsData);
+                renderCosmetics(cosmeticsData);
+                
+                showNotification('Data refreshed successfully!');
             } catch (error) {
-                console.error("Error fetching data:", error);
-                return null;
+                console.error('Error fetching data:', error);
+                showNotification('Failed to update data. Please try again.');
+                lastUpdatedEl.textContent = 'Update failed';
             }
         }
         
-        // Initialize and update data every 30 seconds
-        async function init() {
-            const data = await fetchAllData();
-            if (data) {
-                updateUI(data);
-                
-                // Update timers every second
-                setInterval(() => {
-                    updateTimers(data);
-                }, 1000);
-                
-                // Update all data every 30 seconds
-                setInterval(async () => {
-                    const newData = await fetchAllData();
-                    if (newData) {
-                        updateUI(newData);
-                    }
-                }, 30000);
-            }
+        // Initialize
+        function init() {
+            // Load data immediately
+            fetchData();
+            
+            // Set up auto-refresh every 30 seconds
+            setInterval(fetchData, 30000);
+            
+            // Manual refresh button
+            refreshBtn.addEventListener('click', fetchData);
         }
         
         // Start the app
