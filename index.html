@@ -88,6 +88,7 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s;
+            margin-bottom: 20px;
         }
         
         .refresh-btn:hover {
@@ -238,6 +239,10 @@
             color: #666;
         }
         
+        .empty-state.error {
+            color: var(--danger);
+        }
+        
         .empty-state i {
             font-size: 2rem;
             margin-bottom: 15px;
@@ -289,6 +294,15 @@
         .notification.show {
             transform: translateX(0);
         }
+        
+        .notification.error {
+            background-color: var(--danger);
+        }
+        
+        .notification.warning {
+            background-color: var(--warning);
+            color: var(--dark);
+        }
     </style>
 </head>
 <body>
@@ -300,7 +314,7 @@
             </div>
             <div class="last-updated">
                 <i class="fas fa-clock"></i>
-                <span id="lastUpdated">Updating...</span>
+                <span id="lastUpdated">Loading...</span>
             </div>
         </div>
     </header>
@@ -362,9 +376,7 @@
         <p>Grow A Garden Tracker &copy; 2023 | Data updates every 30 seconds | Not affiliated with Roblox</p>
     </footer>
     
-    <div class="notification" id="notification">
-        Data refreshed successfully!
-    </div>
+    <div class="notification" id="notification"></div>
     
     <script>
         // DOM Elements
@@ -378,11 +390,11 @@
         
         // API Endpoints
         const API_ENDPOINTS = {
-            weather: 'https://growagardenstock.com/api/stock/weather?ts=',
-            egg: 'https://growagardenstock.com/api/stock?type=egg&ts=',
-            gearSeeds: 'https://growagardenstock.com/api/stock?type=gear-seeds&ts=',
-            cosmetics: 'https://growagardenstock.com/api/special-stock?type=cosmetics&ts=',
-            bloodTwilight: 'https://growagardenstock.com/api/special-stock?type=blood-twilight&ts='
+            weather: 'https://growagardenstock.com/api/stock/weather',
+            egg: 'https://growagardenstock.com/api/stock?type=egg',
+            gearSeeds: 'https://growagardenstock.com/api/stock?type=gear-seeds',
+            cosmetics: 'https://growagardenstock.com/api/special-stock?type=cosmetics',
+            bloodTwilight: 'https://growagardenstock.com/api/special-stock?type=blood-twilight'
         };
         
         // Format timestamp
@@ -393,9 +405,16 @@
         }
         
         // Show notification
-        function showNotification(message) {
+        function showNotification(message, type = 'success') {
             notificationEl.textContent = message;
-            notificationEl.classList.add('show');
+            notificationEl.className = 'notification show';
+            
+            if (type === 'error') {
+                notificationEl.classList.add('error');
+            } else if (type === 'warning') {
+                notificationEl.classList.add('warning');
+            }
+            
             setTimeout(() => {
                 notificationEl.classList.remove('show');
             }, 3000);
@@ -413,7 +432,12 @@
         // Render weather data
         function renderWeather(data) {
             if (!data) {
-                weatherDataEl.innerHTML = '<div class="empty-state"><i class="fas fa-cloud"></i><p>No weather data available</p></div>';
+                weatherDataEl.innerHTML = `
+                    <div class="empty-state error">
+                        <i class="fas fa-cloud"></i>
+                        <p>No weather data available</p>
+                    </div>
+                `;
                 return;
             }
             
@@ -449,7 +473,12 @@
         // Render egg data
         function renderEggs(data) {
             if (!data || !data.egg || data.egg.length === 0) {
-                eggDataEl.innerHTML = '<div class="empty-state"><i class="fas fa-egg"></i><p>No eggs in stock</p></div>';
+                eggDataEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-egg"></i>
+                        <p>No eggs in stock</p>
+                    </div>
+                `;
                 return;
             }
             
@@ -482,7 +511,12 @@
         // Render gear and seeds data
         function renderGearSeeds(data) {
             if ((!data.gear || data.gear.length === 0) && (!data.seeds || data.seeds.length === 0)) {
-                gearSeedsDataEl.innerHTML = '<div class="empty-state"><i class="fas fa-seedling"></i><p>No gear or seeds in stock</p></div>';
+                gearSeedsDataEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-seedling"></i>
+                        <p>No gear or seeds in stock</p>
+                    </div>
+                `;
                 return;
             }
             
@@ -521,7 +555,12 @@
         // Render cosmetics data
         function renderCosmetics(data) {
             if (!data || !data.cosmetics || data.cosmetics.length === 0) {
-                cosmeticsDataEl.innerHTML = '<div class="empty-state"><i class="fas fa-paint-brush"></i><p>No cosmetic items in stock</p></div>';
+                cosmeticsDataEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-paint-brush"></i>
+                        <p>No cosmetic items in stock</p>
+                    </div>
+                `;
                 return;
             }
             
@@ -541,50 +580,158 @@
             cosmeticsDataEl.innerHTML = html;
         }
         
+        // Fetch data from API with CORS proxy option
+        async function fetchWithCorsFallback(url) {
+            try {
+                // Try direct fetch first
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.log(`Direct fetch failed for ${url}, trying CORS proxy`);
+                try {
+                    // Fallback to CORS proxy
+                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error(`CORS proxy error! status: ${response.status}`);
+                    const data = await response.json();
+                    return JSON.parse(data.contents);
+                } catch (proxyError) {
+                    throw new Error(`Both direct and proxy fetch failed: ${proxyError.message}`);
+                }
+            }
+        }
+        
         // Fetch data from API
         async function fetchData() {
             try {
                 const timestamp = Date.now();
-                lastUpdatedEl.textContent = 'Updating...';
+                lastUpdatedEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
                 
-                // Fetch all data in parallel
-                const [weatherRes, eggRes, gearSeedsRes, cosmeticsRes] = await Promise.all([
-                    fetch(`${API_ENDPOINTS.weather}${timestamp}`),
-                    fetch(`${API_ENDPOINTS.egg}${timestamp}`),
-                    fetch(`${API_ENDPOINTS.gearSeeds}${timestamp}`),
-                    fetch(`${API_ENDPOINTS.cosmetics}${timestamp}`)
-                ]);
-                
-                const [weatherData, eggData, gearSeedsData, cosmeticsData] = await Promise.all([
-                    weatherRes.json(),
-                    eggRes.json(),
-                    gearSeedsRes.json(),
-                    cosmeticsRes.json()
-                ]);
-                
-                // Update last updated time
-                const updateTime = Math.max(
-                    weatherData.updatedAt || 0,
-                    eggData.updatedAt || 0,
-                    gearSeedsData.updatedAt || 0,
-                    cosmeticsData.updatedAt || 0
+                // Add timestamp to each URL
+                const urls = [
+                    `${API_ENDPOINTS.weather}&ts=${timestamp}&_=${timestamp}`,
+                    `${API_ENDPOINTS.egg}&ts=${timestamp}`,
+                    `${API_ENDPOINTS.gearSeeds}&ts=${timestamp}`,
+                    `${API_ENDPOINTS.cosmetics}&ts=${timestamp}`
+                ];
+
+                // Fetch all data with error handling for each request
+                const responses = await Promise.allSettled(
+                    urls.map(url => fetchWithCorsFallback(url))
                 );
-                lastUpdatedEl.textContent = formatTimestamp(updateTime);
-                
-                // Render data
-                renderWeather(weatherData);
-                renderEggs(eggData);
-                renderGearSeeds(gearSeedsData);
-                renderCosmetics(cosmeticsData);
-                
-                showNotification('Data refreshed successfully!');
+
+                // Process responses
+                const [weatherResult, eggResult, gearSeedsResult, cosmeticsResult] = responses;
+
+                // Check for errors in each response
+                let hasError = false;
+                const errorMessages = [];
+
+                if (weatherResult.status === 'rejected') {
+                    console.error('Weather API error:', weatherResult.reason);
+                    errorMessages.push('Weather data unavailable');
+                    hasError = true;
+                }
+
+                if (eggResult.status === 'rejected') {
+                    console.error('Egg API error:', eggResult.reason);
+                    errorMessages.push('Egg data unavailable');
+                    hasError = true;
+                }
+
+                if (gearSeedsResult.status === 'rejected') {
+                    console.error('Gear/Seeds API error:', gearSeedsResult.reason);
+                    errorMessages.push('Gear/Seeds data unavailable');
+                    hasError = true;
+                }
+
+                if (cosmeticsResult.status === 'rejected') {
+                    console.error('Cosmetics API error:', cosmeticsResult.reason);
+                    errorMessages.push('Cosmetics data unavailable');
+                    hasError = true;
+                }
+
+                // Update UI based on responses
+                if (weatherResult.status === 'fulfilled') {
+                    renderWeather(weatherResult.value);
+                } else {
+                    weatherDataEl.innerHTML = `
+                        <div class="empty-state error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Failed to load weather data</p>
+                            <small>${weatherResult.reason?.message || 'Unknown error'}</small>
+                        </div>
+                    `;
+                }
+
+                if (eggResult.status === 'fulfilled') {
+                    renderEggs(eggResult.value);
+                } else {
+                    eggDataEl.innerHTML = `
+                        <div class="empty-state error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Failed to load egg data</p>
+                            <small>${eggResult.reason?.message || 'Unknown error'}</small>
+                        </div>
+                    `;
+                }
+
+                if (gearSeedsResult.status === 'fulfilled') {
+                    renderGearSeeds(gearSeedsResult.value);
+                } else {
+                    gearSeedsDataEl.innerHTML = `
+                        <div class="empty-state error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Failed to load gear/seeds data</p>
+                            <small>${gearSeedsResult.reason?.message || 'Unknown error'}</small>
+                        </div>
+                    `;
+                }
+
+                if (cosmeticsResult.status === 'fulfilled') {
+                    renderCosmetics(cosmeticsResult.value);
+                } else {
+                    cosmeticsDataEl.innerHTML = `
+                        <div class="empty-state error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Failed to load cosmetics data</p>
+                            <small>${cosmeticsResult.reason?.message || 'Unknown error'}</small>
+                        </div>
+                    `;
+                }
+
+                // Update last updated time
+                const updateTime = Date.now();
+                lastUpdatedEl.innerHTML = `<i class="fas fa-clock"></i> ${formatTimestamp(updateTime)}`;
+
+                if (hasError) {
+                    showNotification(`Partial update: ${errorMessages.join(', ')}`, 'warning');
+                } else {
+                    showNotification('Data refreshed successfully!');
+                }
+
             } catch (error) {
-                console.error('Error fetching data:', error);
-                showNotification('Failed to update data. Please try again.');
-                lastUpdatedEl.textContent = 'Update failed';
+                console.error('Global fetch error:', error);
+                lastUpdatedEl.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Update failed';
+                showNotification('Failed to update data. Please check console for details.', 'error');
+                
+                // Show error details in each section
+                const errorHTML = `
+                    <div class="empty-state error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Network error: ${error.message}</p>
+                        <small>Check console for details</small>
+                    </div>
+                `;
+                
+                weatherDataEl.innerHTML = errorHTML;
+                eggDataEl.innerHTML = errorHTML;
+                gearSeedsDataEl.innerHTML = errorHTML;
+                cosmeticsDataEl.innerHTML = errorHTML;
             }
         }
-        
+
         // Initialize
         function init() {
             // Load data immediately
@@ -598,7 +745,7 @@
         }
         
         // Start the app
-        init();
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
-    </html>
+</html>
