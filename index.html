@@ -4,18 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grow A Garden - Stock Tracker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Fredoka+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #4CAF50;
             --primary-dark: #388E3C;
+            --primary-light: #C8E6C9;
             --secondary: #FF9800;
-            --dark: #333;
+            --secondary-dark: #F57C00;
+            --secondary-light: #FFE0B2;
+            --accent: #8BC34A;
+            --dark: #263238;
             --light: #f9f9f9;
             --gray: #e0e0e0;
             --danger: #F44336;
             --warning: #FFC107;
+            --info: #2196F3;
+            --text: #455A64;
+            --text-light: #90A4AE;
+            --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --card-hover-shadow: 0 8px 24px rgba(0,0,0,0.12);
         }
         
         * {
@@ -26,29 +35,38 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f5f5f5;
-            color: var(--dark);
+            background-color: #f5f7fa;
+            color: var(--text);
             line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
+            flex: 1;
         }
         
         header {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            padding: 15px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
         
         .logo {
@@ -57,52 +75,93 @@
             gap: 15px;
         }
         
-        .logo i {
-            font-size: 2rem;
+        .logo-icon {
+            font-size: 2.2rem;
+            color: white;
+            background: rgba(255,255,255,0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .logo h1 {
+        .logo-text {
+            font-family: 'Fredoka One', cursive;
             font-size: 1.8rem;
-            font-weight: 600;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         
         .last-updated {
-            background-color: var(--primary-dark);
+            background-color: rgba(255,255,255,0.15);
             padding: 8px 15px;
-            border-radius: 20px;
+            border-radius: 8px;
             font-size: 0.9rem;
             display: flex;
             align-items: center;
             gap: 8px;
+            backdrop-filter: blur(5px);
         }
         
         .refresh-btn {
             background-color: var(--secondary);
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
             transition: all 0.3s;
-            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .refresh-btn:hover {
-            background-color: #F57C00;
+            background-color: var(--secondary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+        
+        .main-content {
+            margin-top: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--primary);
         }
         
         .dashboard {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 25px;
+            margin-bottom: 40px;
         }
         
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .dashboard {
                 grid-template-columns: 1fr;
             }
@@ -110,133 +169,184 @@
         
         .card {
             background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.05);
         }
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: var(--card-hover-shadow);
         }
         
         .card-header {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            padding: 15px 20px;
+            padding: 18px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
         .card-header h2 {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header i {
+            font-size: 1.2rem;
         }
         
         .card-body {
-            padding: 20px;
+            padding: 25px;
         }
         
         .weather-card .card-header {
-            background-color: var(--secondary);
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
         }
         
-        .stock-list {
+        .gear-card .card-header {
+            background: linear-gradient(135deg, var(--info), #1976D2);
+        }
+        
+        .cosmetics-card .card-header {
+            background: linear-gradient(135deg, #E91E63, #C2185B);
+        }
+        
+        .stock-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 15px;
         }
         
         .stock-item {
             background-color: var(--light);
-            padding: 12px 15px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.2s;
             border-left: 4px solid var(--primary);
         }
         
+        .stock-item:hover {
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
         .stock-item.gear {
-            border-left-color: #2196F3;
+            border-left-color: var(--info);
+            background-color: #E3F2FD;
         }
         
         .stock-item.seeds {
-            border-left-color: #8BC34A;
+            border-left-color: var(--accent);
+            background-color: #F1F8E9;
         }
         
         .stock-item.egg {
             border-left-color: #9C27B0;
+            background-color: #F3E5F5;
         }
         
         .stock-item.cosmetics {
             border-left-color: #E91E63;
+            background-color: #FCE4EC;
+        }
+        
+        .stock-item .item-name {
+            font-weight: 500;
+            color: var(--dark);
         }
         
         .stock-item .quantity {
-            background-color: var(--gray);
-            padding: 2px 8px;
+            background-color: rgba(0,0,0,0.05);
+            padding: 4px 10px;
             border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 500;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
         }
         
-        .weather-info {
+        .weather-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .weather-current {
             display: flex;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 15px;
+            gap: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--gray);
         }
         
         .weather-icon {
-            font-size: 3rem;
-            width: 80px;
-            height: 80px;
-            background-color: #FFF8E1;
+            font-size: 3.5rem;
+            width: 90px;
+            height: 90px;
+            background-color: var(--secondary-light);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
         
         .weather-details {
             flex: 1;
         }
         
-        .weather-details h3 {
-            font-size: 1.5rem;
+        .weather-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
             margin-bottom: 5px;
+        }
+        
+        .weather-description {
+            color: var(--text);
+            line-height: 1.5;
         }
         
         .weather-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 15px;
-            margin-top: 20px;
         }
         
-        .stat-item {
+        .stat-card {
             background-color: var(--light);
-            padding: 15px;
-            border-radius: 8px;
+            padding: 18px;
+            border-radius: 10px;
+            border-left: 4px solid var(--secondary);
         }
         
-        .stat-item h4 {
+        .stat-card h4 {
             font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 5px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
-        .stat-item p {
+        .stat-card p {
             font-weight: 500;
+            color: var(--dark);
+            line-height: 1.4;
         }
         
         .empty-state {
             text-align: center;
-            padding: 30px;
-            color: #666;
+            padding: 40px 20px;
+            color: var(--text-light);
         }
         
         .empty-state.error {
@@ -244,30 +354,62 @@
         }
         
         .empty-state i {
-            font-size: 2rem;
+            font-size: 2.5rem;
             margin-bottom: 15px;
-            opacity: 0.5;
+            opacity: 0.7;
+        }
+        
+        .empty-state p {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state small {
+            font-size: 0.9rem;
         }
         
         footer {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 0.9rem;
+            background-color: var(--dark);
+            color: white;
+            padding: 25px 0;
             margin-top: 50px;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 0.8;
         }
         
         .loading {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 30px;
+            padding: 50px;
         }
         
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(0,0,0,0.1);
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0,0,0,0.05);
             border-radius: 50%;
             border-top-color: var(--primary);
             animation: spin 1s ease-in-out infinite;
@@ -279,16 +421,20 @@
         
         .notification {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 30px;
+            right: 30px;
             background-color: var(--primary);
             color: white;
-            padding: 15px 20px;
-            border-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 18px 25px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             transform: translateX(200%);
-            transition: transform 0.3s ease-out;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 350px;
         }
         
         .notification.show {
@@ -303,69 +449,189 @@
             background-color: var(--warning);
             color: var(--dark);
         }
+        
+        .notification-icon {
+            font-size: 1.5rem;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        
+        .notification-close:hover {
+            opacity: 1;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .header-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .card-header {
+                padding: 15px 20px;
+            }
+            
+            .card-body {
+                padding: 20px;
+            }
+            
+            .weather-current {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .stock-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .notification {
+                max-width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+                transform: translateY(-150%);
+            }
+            
+            .notification.show {
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
     <header>
-        <div class="container header-content">
+        <div class="header-content">
             <div class="logo">
-                <i class="fas fa-leaf"></i>
-                <h1>Grow A Garden Tracker</h1>
+                <div class="logo-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h1 class="logo-text">Grow Tracker</h1>
             </div>
-            <div class="last-updated">
-                <i class="fas fa-clock"></i>
-                <span id="lastUpdated">Loading...</span>
+            <div class="header-controls">
+                <div class="last-updated">
+                    <i class="fas fa-clock"></i>
+                    <span id="lastUpdated">Loading...</span>
+                </div>
+                <button class="refresh-btn" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
             </div>
         </div>
     </header>
     
     <div class="container">
-        <button class="refresh-btn" id="refreshBtn">
-            <i class="fas fa-sync-alt"></i>
-            Refresh Data
-        </button>
-        
-        <div class="dashboard">
-            <div class="card weather-card">
-                <div class="card-header">
-                    <h2><i class="fas fa-cloud-sun"></i> Current Weather</h2>
-                </div>
-                <div class="card-body" id="weatherData">
-                    <div class="loading">
-                        <div class="spinner"></div>
+        <div class="main-content">
+            <h1 class="section-title">
+                <i class="fas fa-chart-line"></i>
+                Garden Stock Dashboard
+            </h1>
+            
+            <div class="dashboard">
+                <div class="card weather-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-cloud-sun"></i> Current Weather</h2>
+                    </div>
+                    <div class="card-body" id="weatherData">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <h2><i class="fas fa-egg"></i> Eggs in Stock</h2>
-                </div>
-                <div class="card-body" id="eggData">
-                    <div class="loading">
-                        <div class="spinner"></div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-egg"></i> Eggs in Stock</h2>
+                    </div>
+                    <div class="card-body" id="eggData">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <h2><i class="fas fa-tools"></i> Gear & Seeds</h2>
-                </div>
-                <div class="card-body" id="gearSeedsData">
-                    <div class="loading">
-                        <div class="spinner"></div>
+                
+                <div class="card gear-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-tools"></i> Gear & Seeds</h2>
+                    </div>
+                    <div class="card-body" id="gearSeedsData">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <h2><i class="fas fa-paint-brush"></i> Cosmetic Items</h2>
-                </div>
-                <div class="card-body" id="cosmeticsData">
-                    <div class="loading">
-                        <div class="spinner"></div>
+                
+                <div class="card cosmetics-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-paint-brush"></i> Cosmetic Items</h2>
+                    </div>
+                    <div class="card-body" id="cosmeticsData">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -373,10 +639,25 @@
     </div>
     
     <footer>
-        <p>Grow A Garden Tracker &copy; 2023 | Data updates every 30 seconds | Not affiliated with Roblox</p>
+        <div class="footer-content">
+            <p>&copy; 2023 Grow A Garden Tracker | Not affiliated with Roblox</p>
+            <div class="footer-links">
+                <a href="#" class="tooltip">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="tooltiptext">Data updates automatically every 30 seconds</span>
+                </a>
+                <a href="#"><i class="fas fa-bug"></i> Report Issue</a>
+            </div>
+        </div>
     </footer>
     
-    <div class="notification" id="notification"></div>
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle notification-icon"></i>
+        <div class="notification-content" id="notificationContent">Data refreshed successfully!</div>
+        <button class="notification-close" id="notificationClose">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
     
     <script>
         // DOM Elements
@@ -387,6 +668,8 @@
         const gearSeedsDataEl = document.getElementById('gearSeedsData');
         const cosmeticsDataEl = document.getElementById('cosmeticsData');
         const notificationEl = document.getElementById('notification');
+        const notificationContentEl = document.getElementById('notificationContent');
+        const notificationCloseEl = document.getElementById('notificationClose');
         
         // API Endpoints
         const API_ENDPOINTS = {
@@ -401,24 +684,44 @@
         function formatTimestamp(timestamp) {
             if (!timestamp) return 'Just now';
             const date = new Date(timestamp);
-            return date.toLocaleString();
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
         }
         
         // Show notification
         function showNotification(message, type = 'success') {
-            notificationEl.textContent = message;
-            notificationEl.className = 'notification show';
+            // Update notification content
+            notificationContentEl.textContent = message;
             
+            // Update icon based on type
+            const icon = notificationEl.querySelector('.notification-icon');
             if (type === 'error') {
-                notificationEl.classList.add('error');
+                icon.className = 'fas fa-exclamation-circle notification-icon';
+                notificationEl.className = 'notification error show';
             } else if (type === 'warning') {
-                notificationEl.classList.add('warning');
+                icon.className = 'fas fa-exclamation-triangle notification-icon';
+                notificationEl.className = 'notification warning show';
+            } else {
+                icon.className = 'fas fa-check-circle notification-icon';
+                notificationEl.className = 'notification show';
             }
             
-            setTimeout(() => {
+            // Auto-hide after 4 seconds
+            clearTimeout(notificationEl.timeout);
+            notificationEl.timeout = setTimeout(() => {
                 notificationEl.classList.remove('show');
-            }, 3000);
+            }, 4000);
         }
+        
+        // Close notification
+        notificationCloseEl.addEventListener('click', () => {
+            notificationEl.classList.remove('show');
+        });
         
         // Parse item quantity (e.g., "Common Egg **x1**" => {name: "Common Egg", quantity: "x1"})
         function parseItem(item) {
@@ -434,37 +737,40 @@
             if (!data) {
                 weatherDataEl.innerHTML = `
                     <div class="empty-state error">
-                        <i class="fas fa-cloud"></i>
+                        <i class="fas fa-cloud-rain"></i>
                         <p>No weather data available</p>
+                        <small>Failed to load weather information</small>
                     </div>
                 `;
                 return;
             }
             
             weatherDataEl.innerHTML = `
-                <div class="weather-info">
-                    <div class="weather-icon">${data.icon || '☀️'}</div>
-                    <div class="weather-details">
-                        <h3>${data.currentWeather || 'Normal Weather'}</h3>
-                        <p>${data.description || 'Standard growth conditions'}</p>
+                <div class="weather-content">
+                    <div class="weather-current">
+                        <div class="weather-icon">${data.icon || '☀️'}</div>
+                        <div class="weather-details">
+                            <h2 class="weather-title">${data.currentWeather || 'Normal Weather'}</h2>
+                            <p class="weather-description">${data.description || 'Standard growth conditions with no special effects.'}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="weather-stats">
-                    <div class="stat-item">
-                        <h4>Visual Cue</h4>
-                        <p>${data.visualCue || 'None'}</p>
-                    </div>
-                    <div class="stat-item">
-                        <h4>Crop Bonuses</h4>
-                        <p>${data.cropBonuses || 'Standard growth'}</p>
-                    </div>
-                    <div class="stat-item">
-                        <h4>Rarity</h4>
-                        <p>${data.rarity || 'Common'}</p>
-                    </div>
-                    <div class="stat-item">
-                        <h4>Effect</h4>
-                        <p>${data.effectDescription || 'No special effects'}</p>
+                    <div class="weather-stats">
+                        <div class="stat-card">
+                            <h4>Visual Cue</h4>
+                            <p>${data.visualCue || 'No visual cues detected'}</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Crop Bonuses</h4>
+                            <p>${data.cropBonuses || 'Standard growth rates'}</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Rarity</h4>
+                            <p>${data.rarity || 'Common weather pattern'}</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Effects</h4>
+                            <p>${data.effectDescription || 'No special effects active'}</p>
+                        </div>
                     </div>
                 </div>
             `;
@@ -477,6 +783,7 @@
                     <div class="empty-state">
                         <i class="fas fa-egg"></i>
                         <p>No eggs in stock</p>
+                        <small>Check back later for new eggs</small>
                     </div>
                 `;
                 return;
@@ -494,11 +801,11 @@
                 }
             });
             
-            let html = '<div class="stock-list">';
+            let html = '<div class="stock-grid">';
             Object.keys(eggCounts).forEach(eggName => {
                 html += `
                     <div class="stock-item egg">
-                        <span>${eggName}</span>
+                        <span class="item-name">${eggName}</span>
                         <span class="quantity">x${eggCounts[eggName]}</span>
                     </div>
                 `;
@@ -514,13 +821,14 @@
                 gearSeedsDataEl.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-seedling"></i>
-                        <p>No gear or seeds in stock</p>
+                        <p>No gear or seeds available</p>
+                        <small>Inventory appears to be empty</small>
                     </div>
                 `;
                 return;
             }
             
-            let html = '<div class="stock-list">';
+            let html = '<div class="stock-grid">';
             
             // Render gear
             if (data.gear && data.gear.length > 0) {
@@ -528,7 +836,7 @@
                 gearItems.forEach(item => {
                     html += `
                         <div class="stock-item gear">
-                            <span>${item.name}</span>
+                            <span class="item-name">${item.name}</span>
                             <span class="quantity">${item.quantity || 'x1'}</span>
                         </div>
                     `;
@@ -541,7 +849,7 @@
                 seedItems.forEach(item => {
                     html += `
                         <div class="stock-item seeds">
-                            <span>${item.name}</span>
+                            <span class="item-name">${item.name}</span>
                             <span class="quantity">${item.quantity || 'x1'}</span>
                         </div>
                     `;
@@ -558,7 +866,8 @@
                 cosmeticsDataEl.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-paint-brush"></i>
-                        <p>No cosmetic items in stock</p>
+                        <p>No cosmetic items available</p>
+                        <small>No decorative items in stock</small>
                     </div>
                 `;
                 return;
@@ -566,11 +875,11 @@
             
             const cosmeticItems = data.cosmetics.map(item => parseItem(item));
             
-            let html = '<div class="stock-list">';
+            let html = '<div class="stock-grid">';
             cosmeticItems.forEach(item => {
                 html += `
                     <div class="stock-item cosmetics">
-                        <span>${item.name}</span>
+                        <span class="item-name">${item.name}</span>
                         <span class="quantity">${item.quantity || 'x1'}</span>
                     </div>
                 `;
@@ -608,7 +917,7 @@
                 const timestamp = Date.now();
                 lastUpdatedEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
                 
-                // Add timestamp to each URL
+                // Add timestamp to each URL to prevent caching
                 const urls = [
                     `${API_ENDPOINTS.weather}&ts=${timestamp}&_=${timestamp}`,
                     `${API_ENDPOINTS.egg}&ts=${timestamp}`,
@@ -618,7 +927,10 @@
 
                 // Fetch all data with error handling for each request
                 const responses = await Promise.allSettled(
-                    urls.map(url => fetchWithCorsFallback(url))
+                    urls.map(url => fetchWithCorsFallback(url).catch(e => {
+                        console.error(`Fetch error for ${url}:`, e);
+                        throw e;
+                    }))
                 );
 
                 // Process responses
@@ -630,25 +942,25 @@
 
                 if (weatherResult.status === 'rejected') {
                     console.error('Weather API error:', weatherResult.reason);
-                    errorMessages.push('Weather data unavailable');
+                    errorMessages.push('Weather data');
                     hasError = true;
                 }
 
                 if (eggResult.status === 'rejected') {
                     console.error('Egg API error:', eggResult.reason);
-                    errorMessages.push('Egg data unavailable');
+                    errorMessages.push('Egg data');
                     hasError = true;
                 }
 
                 if (gearSeedsResult.status === 'rejected') {
                     console.error('Gear/Seeds API error:', gearSeedsResult.reason);
-                    errorMessages.push('Gear/Seeds data unavailable');
+                    errorMessages.push('Gear/Seeds data');
                     hasError = true;
                 }
 
                 if (cosmeticsResult.status === 'rejected') {
                     console.error('Cosmetics API error:', cosmeticsResult.reason);
-                    errorMessages.push('Cosmetics data unavailable');
+                    errorMessages.push('Cosmetics data');
                     hasError = true;
                 }
 
@@ -660,7 +972,7 @@
                         <div class="empty-state error">
                             <i class="fas fa-exclamation-triangle"></i>
                             <p>Failed to load weather data</p>
-                            <small>${weatherResult.reason?.message || 'Unknown error'}</small>
+                            <small>${weatherResult.reason?.message || 'Unknown error occurred'}</small>
                         </div>
                     `;
                 }
@@ -672,7 +984,7 @@
                         <div class="empty-state error">
                             <i class="fas fa-exclamation-triangle"></i>
                             <p>Failed to load egg data</p>
-                            <small>${eggResult.reason?.message || 'Unknown error'}</small>
+                            <small>${eggResult.reason?.message || 'Unknown error occurred'}</small>
                         </div>
                     `;
                 }
@@ -684,7 +996,7 @@
                         <div class="empty-state error">
                             <i class="fas fa-exclamation-triangle"></i>
                             <p>Failed to load gear/seeds data</p>
-                            <small>${gearSeedsResult.reason?.message || 'Unknown error'}</small>
+                            <small>${gearSeedsResult.reason?.message || 'Unknown error occurred'}</small>
                         </div>
                     `;
                 }
@@ -696,7 +1008,7 @@
                         <div class="empty-state error">
                             <i class="fas fa-exclamation-triangle"></i>
                             <p>Failed to load cosmetics data</p>
-                            <small>${cosmeticsResult.reason?.message || 'Unknown error'}</small>
+                            <small>${cosmeticsResult.reason?.message || 'Unknown error occurred'}</small>
                         </div>
                     `;
                 }
@@ -706,9 +1018,9 @@
                 lastUpdatedEl.innerHTML = `<i class="fas fa-clock"></i> ${formatTimestamp(updateTime)}`;
 
                 if (hasError) {
-                    showNotification(`Partial update: ${errorMessages.join(', ')}`, 'warning');
+                    showNotification(`Some data failed to load: ${errorMessages.join(', ')}`, 'warning');
                 } else {
-                    showNotification('Data refreshed successfully!');
+                    showNotification('All data refreshed successfully!');
                 }
 
             } catch (error) {
@@ -720,8 +1032,8 @@
                 const errorHTML = `
                     <div class="empty-state error">
                         <i class="fas fa-exclamation-triangle"></i>
-                        <p>Network error: ${error.message}</p>
-                        <small>Check console for details</small>
+                        <p>Network error occurred</p>
+                        <small>${error.message || 'Please try again later'}</small>
                     </div>
                 `;
                 
@@ -741,10 +1053,17 @@
             setInterval(fetchData, 30000);
             
             // Manual refresh button
-            refreshBtn.addEventListener('click', fetchData);
+            refreshBtn.addEventListener('click', () => {
+                fetchData();
+                // Add button animation
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+                setTimeout(() => {
+                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+                }, 1000);
+            });
         }
         
-        // Start the app
+        // Start the app when DOM is loaded
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
