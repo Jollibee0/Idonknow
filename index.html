@@ -3,943 +3,1220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love, Scripted | Romantic Comedy Web Series</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Savings Challenge Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
     <style>
-        /* Global Styles */
         :root {
-            --primary: #FF7B54;
-            --secondary: #FFB26B;
-            --accent: #FFD56F;
-            --dark: #3A3845;
-            --light: #F7F7F7;
-            --vintage: #D8B384;
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border: #dee2e6;
+            --shadow: rgba(0, 0, 0, 0.1);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: var(--light);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
             color: var(--dark);
-            overflow-x: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f4 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
         
         .container {
-            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
         }
         
-        section {
-            padding: 80px 0;
-        }
-        
-        h1, h2, h3 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px var(--shadow);
+            margin-bottom: 25px;
+            background: linear-gradient(120deg, #ffffff 0%, #f0f4ff 100%);
+            border-bottom: 4px solid var(--primary);
         }
         
         h1 {
-            font-size: 3.5rem;
-            line-height: 1.2;
-        }
-        
-        h2 {
             font-size: 2.5rem;
-            margin-bottom: 40px;
-            position: relative;
-            display: inline-block;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
         }
         
-        h2:after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 60%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            border-radius: 2px;
-        }
-        
-        p {
-            line-height: 1.6;
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        
-        .btn:hover {
-            background: var(--secondary);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary);
+        h1 i {
             color: var(--primary);
+            font-size: 2.2rem;
         }
         
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
         }
         
-        /* Header */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px 0;
-            z-index: 1000;
-            transition: all 0.3s ease;
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px var(--shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
-        header.scrolled {
-            background-color: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            padding: 15px 0;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
         
-        .header-container {
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .logo span {
-            color: var(--dark);
-        }
-        
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-        
-        nav ul li {
-            margin-left: 30px;
-        }
-        
-        nav ul li a {
-            color: var(--dark);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        nav ul li a:after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--primary);
-            transition: width 0.3s ease;
-        }
-        
-        nav ul li a:hover:after {
-            width: 100%;
-        }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--dark);
-            cursor: pointer;
-        }
-        
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            position: relative;
-            display: flex;
-            align-items: center;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1368&q=80') no-repeat center center/cover;
-            color: white;
-            text-align: center;
-        }
-        
-        .hero-content {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .hero h1 {
-            font-size: 4rem;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-gray);
         }
         
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 30px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-        }
-        
-        .hero-btns {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-        
-        /* About Section */
-        .about {
-            background-color: white;
-        }
-        
-        .about-content {
+        .card-title {
+            font-size: 1.6rem;
+            color: var(--secondary);
             display: flex;
             align-items: center;
-            gap: 50px;
-        }
-        
-        .about-text {
-            flex: 1;
-        }
-        
-        .about-image {
-            flex: 1;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 20px 30px rgba(0,0,0,0.1);
-        }
-        
-        .about-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-        
-        .about-image:hover img {
-            transform: scale(1.05);
-        }
-        
-        /* Characters Section */
-        .characters {
-            background-color: var(--light);
-        }
-        
-        .characters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .character-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .character-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-        }
-        
-        .character-image {
-            height: 350px;
-            overflow: hidden;
-        }
-        
-        .character-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .character-card:hover .character-image img {
-            transform: scale(1.1);
-        }
-        
-        .character-info {
-            padding: 25px;
-            position: relative;
-        }
-        
-        .character-info h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-        
-        .character-role {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--dark);
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-        
-        /* Gallery Section */
-        .gallery {
-            background-color: white;
-        }
-        
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        
-        .gallery-item {
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            height: 250px;
-        }
-        
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-        
-        .gallery-item-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .gallery-item:hover .gallery-item-overlay {
-            opacity: 1;
-        }
-        
-        .gallery-item-overlay i {
-            color: white;
-            font-size: 2rem;
-        }
-        
-        /* Trailer Section */
-        .trailer {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            text-align: center;
-        }
-        
-        .trailer h2 {
-            color: white;
-        }
-        
-        .trailer h2:after {
-            background: white;
-        }
-        
-        .trailer-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .video-wrapper {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
-        /* Quiz Section */
-        .quiz {
-            background-color: var(--light);
-        }
-        
-        .quiz-container {
-            background: white;
-            border-radius: 10px;
-            padding: 50px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .quiz-question {
-            margin-bottom: 30px;
-        }
-        
-        .quiz-question h3 {
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-        
-        .quiz-options {
-            display: flex;
-            flex-direction: column;
             gap: 10px;
         }
         
-        .quiz-option {
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 25px;
+            background: var(--light-gray);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            border-radius: 12px;
+            transition: width 0.5s ease;
             display: flex;
             align-items: center;
-            padding: 15px;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .stat-card {
             background: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+        
+        .positive {
+            color: #2ecc71;
+        }
+        
+        .negative {
+            color: #e74c3c;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background: var(--light);
+            font-weight: 600;
+            color: var(--dark);
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9ff;
+        }
+        
+        tr:hover {
+            background-color: #f0f4ff;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
             border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .quiz-option:hover {
-            background: #e0e0e0;
-        }
-        
-        .quiz-option input {
-            margin-right: 10px;
-        }
-        
-        /* Footer */
-        footer {
-            background: var(--dark);
+        .btn-primary {
+            background: var(--primary);
             color: white;
-            padding: 60px 0 20px;
         }
         
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
+        .btn-secondary {
+            background: var(--gray);
+            color: white;
         }
         
-        .footer-column h3 {
-            font-size: 1.3rem;
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin: 25px 0;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
             margin-bottom: 20px;
-            color: var(--accent);
         }
         
-        .footer-column ul {
-            list-style: none;
-        }
-        
-        .footer-column ul li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-column ul li a {
-            color: #ccc;
-            text-decoration: none;
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
             transition: all 0.3s ease;
         }
         
-        .footer-column ul li a:hover {
-            color: white;
-            padding-left: 5px;
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
         }
         
-        .social-links {
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .milestone-message {
+            background: linear-gradient(120deg, #e0f7fa, #e3f2fd);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
             display: flex;
+            align-items: center;
             gap: 15px;
         }
         
-        .social-links a {
+        .milestone-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .sync-status {
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            color: white;
-            transition: all 0.3s ease;
-        }
-        
-        .social-links a:hover {
-            background: var(--primary);
-            transform: translateY(-3px);
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: #aaa;
+            gap: 8px;
+            background: #e8f4f8;
+            padding: 8px 15px;
+            border-radius: 20px;
             font-size: 0.9rem;
+            color: #2c7a9e;
         }
         
-        /* Responsive Styles */
-        @media (max-width: 992px) {
-            h1 {
-                font-size: 3rem;
-            }
-            
-            h2 {
-                font-size: 2rem;
-            }
-            
-            .about-content {
-                flex-direction: column;
-            }
-            
-            .about-text, .about-image {
-                flex: none;
-                width: 100%;
-            }
+        .sync-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4caf50;
+        }
+        
+        .sync-indicator.offline {
+            background: #f44336;
+        }
+        
+        .flex-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
         }
         
         @media (max-width: 768px) {
-            nav {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 80%;
-                max-width: 300px;
-                height: 100vh;
-                background: white;
-                box-shadow: -5px 0 20px rgba(0,0,0,0.1);
-                transition: right 0.3s ease;
-                z-index: 1001;
-                padding: 80px 30px;
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
             
-            nav.active {
-                right: 0;
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.85rem;
             }
             
-            nav ul {
+            .card {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .btn-group {
                 flex-direction: column;
-            }
-            
-            nav ul li {
-                margin: 15px 0;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-                z-index: 1002;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1.1rem;
-            }
-            
-            .hero-btns {
-                flex-direction: column;
-                align-items: center;
             }
             
             .btn {
                 width: 100%;
-                max-width: 250px;
-                text-align: center;
+                justify-content: center;
             }
             
-            section {
-                padding: 60px 0;
-            }
-            
-            .quiz-container {
-                padding: 30px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            h2 {
-                font-size: 1.8rem;
-            }
-            
-            .character-image {
-                height: 250px;
+            .tabs {
+                overflow-x: auto;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header id="header">
-        <div class="container header-container">
-            <a href="#" class="logo">Love<span>Scripted</span></a>
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
-            <nav id="mainNav">
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#characters">Characters</a></li>
-                    <li><a href="#gallery">Gallery</a></li>
-                    <li><a href="#trailer">Trailer</a></li>
-                    <li><a href="#quiz">Quiz</a></li>
-                </ul>
-            </nav>
+    <div class="container">
+        <header>
+            <h1><i>📱</i> Cellphone Savings Challenge</h1>
+            <p class="subtitle">Track your progress towards saving ₱6,000 in 40 weeks for a new phone, plus a ₱2,000 emergency fund</p>
+        </header>
+        
+        <div class="sync-status">
+            <div class="sync-indicator"></div>
+            <span>Online - Data synced</span>
         </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1>Was it real... or just part of the script?</h1>
-            <p>Three friends. One fake tour guide. A vacation they'll never forget.</p>
-            <div class="hero-btns">
-                <a href="#trailer" class="btn">Watch Trailer</a>
-                <a href="#quiz" class="btn btn-outline">Take the Quiz</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about" id="about">
-        <div class="container">
-            <h2>About the Series</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>Three heartbroken friends go on a vacation to forget their past. Little do they know, their charming tour guide, Levi, is actually a paid actor hired to make their trip more "romantic" for social media clout.</p>
-                    <p>As feelings grow messy between the friends and their guide, the biggest question remains: Was any of it real? Or was it all just part of Tita Bebang's scheme to make her inn go viral?</p>
-                    <p>This romantic comedy web series explores modern relationships, social media facades, and the blurred lines between performance and reality.</p>
-                    <a href="#characters" class="btn">Meet the Characters</a>
-                </div>
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80" alt="Friends on vacation">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Characters Section -->
-    <section class="characters" id="characters">
-        <div class="container">
-            <h2>Meet the Characters</h2>
-            <div class="characters-grid">
-                <!-- Character 1 -->
-                <div class="character-card">
-                    <div class="character-image">
-                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Aya">
-                    </div>
-                    <div class="character-info">
-                        <h3>Aya</h3>
-                        <span class="character-role">The Hopeless Romantic</span>
-                        <p>"She believed in fairy tales... until she found out hers was scripted."</p>
-                    </div>
-                </div>
-                
-                <!-- Character 2 -->
-                <div class="character-card">
-                    <div class="character-image">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" alt="Levi">
-                    </div>
-                    <div class="character-info">
-                        <h3>Levi</h3>
-                        <span class="character-role">The Charming Fake Tour Guide</span>
-                        <p>"Hired to make her fall in love. What happens when he does too?"</p>
-                    </div>
-                </div>
-                
-                <!-- Character 3 -->
-                <div class="character-card">
-                    <div class="character-image">
-                        <img src="https://images.unsplash.com/photo-1550547660-7bf6b6bc2dae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" alt="Tita Bebang">
-                    </div>
-                    <div class="character-info">
-                        <h3>Tita Bebang</h3>
-                        <span class="character-role">The Scheming Inn Owner</span>
-                        <p>"She wanted viral reviews. She didn't expect real feelings."</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Gallery Section -->
-    <section class="gallery" id="gallery">
-        <div class="container">
-            <h2>Gallery</h2>
-            <div class="gallery-grid">
-                <!-- Gallery Item 1 -->
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" alt="Behind the Scenes">
-                    <div class="gallery-item-overlay">
-                        <i class="fas fa-search-plus"></i>
-                    </div>
-                </div>
-                
-                <!-- Gallery Item 2 -->
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1540210374955-5dc309a08a8e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" alt="Filming Location">
-                    <div class="gallery-item-overlay">
-                        <i class="fas fa-search-plus"></i>
-                    </div>
-                </div>
-                
-                <!-- Gallery Item 3 -->
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80" alt="Cast Photo">
-                    <div class="gallery-item-overlay">
-                        <i class="fas fa-search-plus"></i>
-                    </div>
-                </div>
-                
-                <!-- Gallery Item 4 -->
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1473&q=80" alt="Behind the Scenes">
-                    <div class="gallery-item-overlay">
-                        <i class="fas fa-search-plus"></i>
-                    </div>
-                </div>
-                
-                <!-- Gallery Item 5 -->
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1386&q=80" alt="Filming Location">
-                    <div class="gallery-item-overlay">
-                        <i class="fas fa-search-plus"></i>
-                    </div>
-                </div>
-                
-                <!-- Gallery Item 6 -->
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Cast Photo">
-                    <div class="gallery-item-overlay">
-                        <i class="fas fa-search-plus"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Trailer Section -->
-    <section class="trailer" id="trailer">
-        <div class="container">
-            <h2>Watch the Trailer</h2>
-            <div class="trailer-container">
-                <div class="video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                </div>
-                <p>Coming soon to your favorite streaming platform.</p>
-                <a href="#" class="btn">Notify Me When It's Out</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Quiz Section -->
-    <section class="quiz" id="quiz">
-        <div class="container">
-            <h2>Was It Real? Take the Quiz</h2>
-            <div class="quiz-container">
-                <div class="quiz-question">
-                    <h3>1. Would you forgive Levi if you were Aya?</h3>
-                    <div class="quiz-options">
-                        <label class="quiz-option">
-                            <input type="radio" name="q1" value="yes"> 
-                            Yes, if his feelings were genuine
-                        </label>
-                        <label class="quiz-option">
-                            <input type="radio" name="q1" value="no"> 
-                            No, the betrayal is too much
-                        </label>
-                        <label class="quiz-option">
-                            <input type="radio" name="q1" value="maybe"> 
-                            Maybe, but only after time apart
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="quiz-question">
-                    <h3>2. Do you think any of Levi's feelings were real?</h3>
-                    <div class="quiz-options">
-                        <label class="quiz-option">
-                            <input type="radio" name="q2" value="yes"> 
-                            Yes, you can't fake that kind of connection
-                        </label>
-                        <label class="quiz-option">
-                            <input type="radio" name="q2" value="no"> 
-                            No, it was all part of the act
-                        </label>
-                        <label class="quiz-option">
-                            <input type="radio" name="q2" value="unsure"> 
-                            I'm not sure - that's what makes it interesting
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="quiz-question">
-                    <h3>3. Would you stay at Tita Bebang's inn knowing the truth?</h3>
-                    <div class="quiz-options">
-                        <label class="quiz-option">
-                            <input type="radio" name="q3" value="yes"> 
-                            Yes, but only for the drama
-                        </label>
-                        <label class="quiz-option">
-                            <input type="radio" name="q3" value="no"> 
-                            No way, that's deceptive marketing
-                        </label>
-                        <label class="quiz-option">
-                            <input type="radio" name="q3" value="depends"> 
-                            Depends on how good the fake romance was
-                        </label>
-                    </div>
-                </div>
-                
-                <button class="btn" id="submitQuiz">Submit Answers</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>LoveScripted</h3>
-                    <p>A romantic comedy web series about love, deception, and the blurred lines between performance and reality.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#characters">Characters</a></li>
-                        <li><a href="#gallery">Gallery</a></li>
-                        <li><a href="#trailer">Trailer</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Contact</h3>
-                    <ul>
-                        <li><a href="mailto:info@lovescripted.com">info@lovescripted.com</a></li>
-                        <li><a href="#">Press Kit</a></li>
-                        <li><a href="#">Collaborations</a></li>
-                    </ul>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title"><i>📊</i> Savings Overview</h2>
+                <div class="flex-switch">
+                    <span>Flex Mode:</span>
+                    <label class="switch">
+                        <input type="checkbox" id="flexModeToggle">
+                        <span class="slider"></span>
+                    </label>
                 </div>
             </div>
             
-            <div class="copyright">
-                <p>&copy; 2023 LoveScripted. All rights reserved. | Created with ❤️ for hopeless romantics</p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Saved (Phone)</div>
+                    <div class="stat-value">₱<span id="total-saved">0</span></div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="phone-progress" style="width: 0%">0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">Remaining Amount</div>
+                    <div class="stat-value">₱<span id="remaining-amount">6000</span></div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="remaining-progress" style="width: 100%">100%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">Emergency Fund Saved</div>
+                    <div class="stat-value">₱<span id="emergency-saved">0</span></div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="emergency-progress" style="width: 0%">0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">Weeks Completed</div>
+                    <div class="stat-value"><span id="weeks-completed">0</span>/40</div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="weeks-progress" style="width: 0%">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="milestone-message" class="milestone-message">
+                <div class="milestone-icon">🚀</div>
+                <div>
+                    <strong>Let's get started!</strong> Your savings journey begins today. Save ₱150 this week to kickstart your challenge!
+                </div>
             </div>
         </div>
-    </footer>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="phone">Phone Savings</div>
+            <div class="tab" data-tab="emergency">Emergency Fund</div>
+            <div class="tab" data-tab="charts">Progress Charts</div>
+        </div>
+        
+        <div class="tab-content active" id="phone-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i>📅</i> 40-Week Savings Plan</h2>
+                    <div>Target: ₱6,000 | Weekly: ₱150</div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table id="savings-table">
+                        <thead>
+                            <tr>
+                                <th>Week</th>
+                                <th>Date Range</th>
+                                <th>Target (₱)</th>
+                                <th>Actual Save (₱)</th>
+                                <th>Difference (₱)</th>
+                                <th>Cumulative (₱)</th>
+                                <th>Source</th>
+                                <th>Progress</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="savings-body">
+                            <!-- Rows will be generated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="emergency-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i>🛡️</i> Emergency Fund Tracker</h2>
+                    <div>Target: ₱2,000 | Weekly: ₱100</div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table id="emergency-table">
+                        <thead>
+                            <tr>
+                                <th>Week</th>
+                                <th>Date Range</th>
+                                <th>Target (₱)</th>
+                                <th>Actual Save (₱)</th>
+                                <th>Difference (₱)</th>
+                                <th>Cumulative (₱)</th>
+                                <th>Source</th>
+                                <th>Progress</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="emergency-body">
+                            <!-- Rows will be generated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="charts-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i>📈</i> Savings Progress</h2>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="weekly-chart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="cumulative-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn btn-primary" id="saveBtn">
+                <i>💾</i> Save Data
+            </button>
+            <button class="btn btn-secondary" id="exportBtn">
+                <i>📤</i> Export to Excel
+            </button>
+            <button class="btn btn-success" id="printBtn">
+                <i>🖨️</i> Print Report
+            </button>
+            <button class="btn btn-secondary" id="resetBtn">
+                <i>🔄</i> Reset Data
+            </button>
+        </div>
+    </div>
 
     <script>
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mainNav = document.getElementById('mainNav');
+        // Constants and initial data
+        const PHONE_GOAL = 6000;
+        const PHONE_WEEKLY = 150;
+        const EMERGENCY_GOAL = 2000;
+        const EMERGENCY_WEEKLY = 100;
+        const TOTAL_WEEKS = 40;
+        const EMERGENCY_WEEKS = 20;
+        const START_DATE = new Date(2025, 5, 23); // June 23, 2025 (months are 0-indexed)
         
-        mobileMenuBtn.addEventListener('click', () => {
-            mainNav.classList.toggle('active');
-            mobileMenuBtn.innerHTML = mainNav.classList.contains('active') ? 
-                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-        });
+        // Main data structure
+        let savingsData = {
+            phone: [],
+            emergency: [],
+            flexMode: false,
+            lastSaved: null
+        };
         
-        // Close mobile menu when clicking a link
-        const navLinks = document.querySelectorAll('nav ul li a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (mainNav.classList.contains('active')) {
-                    mainNav.classList.remove('active');
-                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                }
-            });
-        });
-        
-        // Header scroll effect
-        const header = document.getElementById('header');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 100) {
-                header.classList.add('scrolled');
+        // Initialize the application
+        function init() {
+            // Load data from localStorage if available
+            const savedData = localStorage.getItem('savingsData');
+            if (savedData) {
+                savingsData = JSON.parse(savedData);
+                console.log('Loaded data from localStorage');
             } else {
-                header.classList.remove('scrolled');
+                initializeData();
             }
-        });
+            
+            // Set up UI
+            setupTabs();
+            renderTables();
+            updateDashboard();
+            setupEventListeners();
+            renderCharts();
+        }
         
-        // Quiz submission
-        const submitQuiz = document.getElementById('submitQuiz');
-        submitQuiz.addEventListener('click', () => {
-            alert('Thanks for taking our quiz! The real answer is... watch the series to find out!');
-        });
+        // Initialize data structure
+        function initializeData() {
+            // Initialize phone savings data
+            for (let i = 0; i < TOTAL_WEEKS; i++) {
+                const startDate = new Date(START_DATE);
+                startDate.setDate(START_DATE.getDate() + i * 7);
+                const endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + 6);
+                
+                savingsData.phone.push({
+                    week: i + 1,
+                    startDate: startDate,
+                    endDate: endDate,
+                    target: PHONE_WEEKLY,
+                    actual: 0,
+                    source: '',
+                    notes: '',
+                    cumulative: 0,
+                    difference: 0,
+                    progress: 0
+                });
+            }
+            
+            // Initialize emergency fund data
+            for (let i = 0; i < EMERGENCY_WEEKS; i++) {
+                const startDate = new Date(START_DATE);
+                startDate.setDate(START_DATE.getDate() + i * 7);
+                const endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + 6);
+                
+                savingsData.emergency.push({
+                    week: i + 1,
+                    startDate: startDate,
+                    endDate: endDate,
+                    target: EMERGENCY_WEEKLY,
+                    actual: 0,
+                    source: '',
+                    notes: '',
+                    cumulative: 0,
+                    difference: 0,
+                    progress: 0
+                });
+            }
+            
+            // Set initial flex mode
+            savingsData.flexMode = false;
+            document.getElementById('flexModeToggle').checked = savingsData.flexMode;
+        }
         
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
+        // Set up UI tabs
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Hide all tab content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
                     });
+                    
+                    // Show corresponding content
+                    const tabName = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabName}-content`).classList.add('active');
+                });
+            });
+        }
+        
+        // Render tables
+        function renderTables() {
+            renderPhoneTable();
+            renderEmergencyTable();
+        }
+        
+        // Render phone savings table
+        function renderPhoneTable() {
+            const tbody = document.getElementById('savings-body');
+            tbody.innerHTML = '';
+            
+            let cumulative = 0;
+            
+            savingsData.phone.forEach((week, index) => {
+                // Calculate cumulative savings
+                cumulative += week.actual;
+                
+                // Calculate difference
+                const difference = week.actual - week.target;
+                
+                // Calculate progress percentage
+                const progress = Math.min(100, Math.round((cumulative / PHONE_GOAL) * 100));
+                
+                // Format date range
+                const dateRange = formatDate(week.startDate) + ' - ' + formatDate(week.endDate);
+                
+                // Create progress bar
+                const progressBar = `<div class="progress-bar" style="height: 10px; background: #e0e0e0; border-radius: 5px;">
+                    <div class="progress-fill" style="height: 100%; width: ${progress}%; background: ${progress === 100 ? '#2ecc71' : '#4361ee'}; border-radius: 5px;"></div>
+                </div>`;
+                
+                // Create row
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${week.week}</td>
+                    <td>${dateRange}</td>
+                    <td>${week.target}</td>
+                    <td>
+                        <input type="number" min="0" step="10" class="actual-input" data-type="phone" data-index="${index}" value="${week.actual}">
+                    </td>
+                    <td class="${difference >= 0 ? 'positive' : 'negative'}">${difference}</td>
+                    <td>${cumulative}</td>
+                    <td>
+                        <select class="source-select" data-type="phone" data-index="${index}">
+                            <option value="">Select Source</option>
+                            <option value="baon" ${week.source === 'baon' ? 'selected' : ''}>Baon</option>
+                            <option value="sideline" ${week.source === 'sideline' ? 'selected' : ''}>Sideline</option>
+                            <option value="gift" ${week.source === 'gift' ? 'selected' : ''}>Gift</option>
+                            <option value="other" ${week.source === 'other' ? 'selected' : ''}>Other</option>
+                        </select>
+                    </td>
+                    <td>${progressBar} ${progress}%</td>
+                    <td>
+                        <input type="text" class="notes-input" data-type="phone" data-index="${index}" value="${week.notes}" placeholder="Add notes...">
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Render emergency fund table
+        function renderEmergencyTable() {
+            const tbody = document.getElementById('emergency-body');
+            tbody.innerHTML = '';
+            
+            let cumulative = 0;
+            
+            savingsData.emergency.forEach((week, index) => {
+                // Calculate cumulative savings
+                cumulative += week.actual;
+                
+                // Calculate difference
+                const difference = week.actual - week.target;
+                
+                // Calculate progress percentage
+                const progress = Math.min(100, Math.round((cumulative / EMERGENCY_GOAL) * 100));
+                
+                // Format date range
+                const dateRange = formatDate(week.startDate) + ' - ' + formatDate(week.endDate);
+                
+                // Create progress bar
+                const progressBar = `<div class="progress-bar" style="height: 10px; background: #e0e0e0; border-radius: 5px;">
+                    <div class="progress-fill" style="height: 100%; width: ${progress}%; background: ${progress === 100 ? '#2ecc71' : '#4361ee'}; border-radius: 5px;"></div>
+                </div>`;
+                
+                // Create row
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${week.week}</td>
+                    <td>${dateRange}</td>
+                    <td>${week.target}</td>
+                    <td>
+                        <input type="number" min="0" step="10" class="actual-input" data-type="emergency" data-index="${index}" value="${week.actual}">
+                    </td>
+                    <td class="${difference >= 0 ? 'positive' : 'negative'}">${difference}</td>
+                    <td>${cumulative}</td>
+                    <td>
+                        <select class="source-select" data-type="emergency" data-index="${index}">
+                            <option value="">Select Source</option>
+                            <option value="baon" ${week.source === 'baon' ? 'selected' : ''}>Baon</option>
+                            <option value="sideline" ${week.source === 'sideline' ? 'selected' : ''}>Sideline</option>
+                            <option value="gift" ${week.source === 'gift' ? 'selected' : ''}>Gift</option>
+                            <option value="other" ${week.source === 'other' ? 'selected' : ''}>Other</option>
+                        </select>
+                    </td>
+                    <td>${progressBar} ${progress}%</td>
+                    <td>
+                        <input type="text" class="notes-input" data-type="emergency" data-index="${index}" value="${week.notes}" placeholder="Add notes...">
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Update dashboard with summary data
+        function updateDashboard() {
+            // Calculate phone savings totals
+            let phoneTotal = 0;
+            let weeksCompleted = 0;
+            
+            savingsData.phone.forEach(week => {
+                phoneTotal += week.actual;
+                if (week.actual > 0) weeksCompleted++;
+            });
+            
+            const phoneProgress = Math.min(100, Math.round((phoneTotal / PHONE_GOAL) * 100));
+            const remainingAmount = PHONE_GOAL - phoneTotal;
+            
+            // Calculate emergency fund total
+            let emergencyTotal = 0;
+            savingsData.emergency.forEach(week => {
+                emergencyTotal += week.actual;
+            });
+            
+            const emergencyProgress = Math.min(100, Math.round((emergencyTotal / EMERGENCY_GOAL) * 100));
+            const weeksProgress = Math.min(100, Math.round((weeksCompleted / TOTAL_WEEKS) * 100));
+            
+            // Update DOM elements
+            document.getElementById('total-saved').textContent = phoneTotal;
+            document.getElementById('remaining-amount').textContent = remainingAmount;
+            document.getElementById('emergency-saved').textContent = emergencyTotal;
+            document.getElementById('weeks-completed').textContent = weeksCompleted;
+            
+            // Update progress bars
+            document.getElementById('phone-progress').style.width = phoneProgress + '%';
+            document.getElementById('phone-progress').textContent = phoneProgress + '%';
+            
+            document.getElementById('remaining-progress').style.width = phoneProgress + '%';
+            
+            document.getElementById('emergency-progress').style.width = emergencyProgress + '%';
+            document.getElementById('emergency-progress').textContent = emergencyProgress + '%';
+            
+            document.getElementById('weeks-progress').style.width = weeksProgress + '%';
+            document.getElementById('weeks-progress').textContent = weeksProgress + '%';
+            
+            // Update milestone message
+            updateMilestoneMessage(phoneProgress);
+            
+            // Apply flex mode if enabled
+            applyFlexMode();
+        }
+        
+        // Update milestone message based on progress
+        function updateMilestoneMessage(progress) {
+            const messageContainer = document.getElementById('milestone-message');
+            let message = '';
+            let icon = '🚀';
+            
+            if (progress === 0) {
+                message = "Let's get started! Your savings journey begins today. Save ₱150 this week to kickstart your challenge!";
+                icon = "🚀";
+            } else if (progress < 25) {
+                message = "Great start! You're on your way to your goal. Keep up the good saving habits!";
+                icon = "👏";
+            } else if (progress < 50) {
+                message = "Awesome progress! You've passed the 25% milestone. Keep going!";
+                icon = "🎯";
+            } else if (progress < 75) {
+                message = "Halfway there! You've saved half of your goal. This is an amazing achievement!";
+                icon = "✨";
+            } else if (progress < 100) {
+                message = "Almost there! You're in the home stretch. Just a few more weeks to reach your goal!";
+                icon = "💪";
+            } else {
+                message = "Congratulations! 🎉 You've successfully reached your savings goal. Treat yourself to that new phone!";
+                icon = "🏆";
+            }
+            
+            messageContainer.innerHTML = `
+                <div class="milestone-icon">${icon}</div>
+                <div>
+                    <strong>${progress >= 100 ? 'Challenge Complete!' : 'Milestone Reached!'}</strong> ${message}
+                </div>
+            `;
+        }
+        
+        // Apply flex mode adjustments
+        function applyFlexMode() {
+            if (!savingsData.flexMode) return;
+            
+            // Calculate total saved so far
+            let totalSaved = 0;
+            let weeksCompleted = 0;
+            
+            savingsData.phone.forEach(week => {
+                totalSaved += week.actual;
+                if (week.actual > 0) weeksCompleted++;
+            });
+            
+            // Calculate remaining weeks and amount
+            const remainingWeeks = TOTAL_WEEKS - weeksCompleted;
+            const remainingAmount = PHONE_GOAL - totalSaved;
+            
+            if (remainingWeeks <= 0 || remainingAmount <= 0) return;
+            
+            // Calculate new weekly target
+            const newWeeklyTarget = Math.max(0, Math.ceil(remainingAmount / remainingWeeks));
+            
+            // Apply new targets to future weeks
+            for (let i = weeksCompleted; i < TOTAL_WEEKS; i++) {
+                savingsData.phone[i].target = newWeeklyTarget;
+            }
+            
+            // Re-render table to reflect changes
+            renderPhoneTable();
+        }
+        
+        // Format date as MM/DD/YYYY
+        function formatDate(date) {
+            return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`;
+        }
+        
+        // Render charts
+        function renderCharts() {
+            // Prepare data for charts
+            const weeks = savingsData.phone.map(week => `Week ${week.week}`);
+            const phoneTargets = savingsData.phone.map(week => week.target);
+            const phoneActuals = savingsData.phone.map(week => week.actual);
+            
+            let phoneCumulative = 0;
+            const phoneCumulativeData = savingsData.phone.map(week => {
+                phoneCumulative += week.actual;
+                return phoneCumulative;
+            });
+            
+            // Weekly Chart
+            const weeklyCtx = document.getElementById('weekly-chart').getContext('2d');
+            new Chart(weeklyCtx, {
+                type: 'bar',
+                data: {
+                    labels: weeks,
+                    datasets: [
+                        {
+                            label: 'Target (₱)',
+                            data: phoneTargets,
+                            backgroundColor: 'rgba(67, 97, 238, 0.5)',
+                            borderColor: 'rgba(67, 97, 238, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Actual (₱)',
+                            data: phoneActuals,
+                            backgroundColor: 'rgba(76, 201, 240, 0.7)',
+                            borderColor: 'rgba(76, 201, 240, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount (₱)'
+                            }
+                        }
+                    }
                 }
             });
-        });
+            
+            // Cumulative Chart
+            const cumulativeCtx = document.getElementById('cumulative-chart').getContext('2d');
+            new Chart(cumulativeCtx, {
+                type: 'line',
+                data: {
+                    labels: weeks,
+                    datasets: [
+                        {
+                            label: 'Cumulative Savings (₱)',
+                            data: phoneCumulativeData,
+                            backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                            borderColor: 'rgba(46, 204, 113, 1)',
+                            borderWidth: 3,
+                            tension: 0.2,
+                            fill: true
+                        },
+                        {
+                            label: 'Goal (₱6000)',
+                            data: Array(TOTAL_WEEKS).fill(PHONE_GOAL),
+                            borderColor: 'rgba(231, 76, 60, 1)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount (₱)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Input changes
+            document.body.addEventListener('input', (e) => {
+                if (e.target.classList.contains('actual-input')) {
+                    const type = e.target.dataset.type;
+                    const index = parseInt(e.target.dataset.index);
+                    const value = parseFloat(e.target.value) || 0;
+                    
+                    if (type === 'phone') {
+                        savingsData.phone[index].actual = value;
+                    } else if (type === 'emergency') {
+                        savingsData.emergency[index].actual = value;
+                    }
+                    
+                    saveData();
+                    updateDashboard();
+                    renderTables();
+                }
+            });
+            
+            // Source changes
+            document.body.addEventListener('change', (e) => {
+                if (e.target.classList.contains('source-select')) {
+                    const type = e.target.dataset.type;
+                    const index = parseInt(e.target.dataset.index);
+                    const value = e.target.value;
+                    
+                    if (type === 'phone') {
+                        savingsData.phone[index].source = value;
+                    } else if (type === 'emergency') {
+                        savingsData.emergency[index].source = value;
+                    }
+                    
+                    saveData();
+                }
+            });
+            
+            // Notes changes
+            document.body.addEventListener('input', (e) => {
+                if (e.target.classList.contains('notes-input')) {
+                    const type = e.target.dataset.type;
+                    const index = parseInt(e.target.dataset.index);
+                    const value = e.target.value;
+                    
+                    if (type === 'phone') {
+                        savingsData.phone[index].notes = value;
+                    } else if (type === 'emergency') {
+                        savingsData.emergency[index].notes = value;
+                    }
+                    
+                    saveData();
+                }
+            });
+            
+            // Flex mode toggle
+            document.getElementById('flexModeToggle').addEventListener('change', (e) => {
+                savingsData.flexMode = e.target.checked;
+                saveData();
+                updateDashboard();
+            });
+            
+            // Save button
+            document.getElementById('saveBtn').addEventListener('click', () => {
+                saveData();
+                alert('Data saved successfully!');
+            });
+            
+            // Export button
+            document.getElementById('exportBtn').addEventListener('click', exportToExcel);
+            
+            // Print button
+            document.getElementById('printBtn').addEventListener('click', () => {
+                window.print();
+            });
+            
+            // Reset button
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
+                    localStorage.removeItem('savingsData');
+                    savingsData = { phone: [], emergency: [], flexMode: false, lastSaved: null };
+                    initializeData();
+                    saveData();
+                    renderTables();
+                    updateDashboard();
+                    renderCharts();
+                    alert('All data has been reset.');
+                }
+            });
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            savingsData.lastSaved = new Date();
+            localStorage.setItem('savingsData', JSON.stringify(savingsData));
+            console.log('Data saved to localStorage');
+        }
+        
+        // Export data to Excel
+        function exportToExcel() {
+            // Create a new workbook
+            const workbook = new ExcelJS.Workbook();
+            
+            // Add phone savings worksheet
+            const phoneSheet = workbook.addWorksheet('Phone Savings');
+            phoneSheet.columns = [
+                { header: 'Week', key: 'week' },
+                { header: 'Start Date', key: 'startDate' },
+                { header: 'End Date', key: 'endDate' },
+                { header: 'Target (₱)', key: 'target' },
+                { header: 'Actual Save (₱)', key: 'actual' },
+                { header: 'Difference (₱)', key: 'difference' },
+                { header: 'Cumulative (₱)', key: 'cumulative' },
+                { header: 'Source', key: 'source' },
+                { header: 'Notes', key: 'notes' }
+            ];
+            
+            let phoneCumulative = 0;
+            savingsData.phone.forEach(week => {
+                phoneCumulative += week.actual;
+                const difference = week.actual - week.target;
+                
+                phoneSheet.addRow({
+                    week: week.week,
+                    startDate: formatDate(week.startDate),
+                    endDate: formatDate(week.endDate),
+                    target: week.target,
+                    actual: week.actual,
+                    difference: difference,
+                    cumulative: phoneCumulative,
+                    source: week.source,
+                    notes: week.notes
+                });
+            });
+            
+            // Add emergency fund worksheet
+            const emergencySheet = workbook.addWorksheet('Emergency Fund');
+            emergencySheet.columns = [
+                { header: 'Week', key: 'week' },
+                { header: 'Start Date', key: 'startDate' },
+                { header: 'End Date', key: 'endDate' },
+                { header: 'Target (₱)', key: 'target' },
+                { header: 'Actual Save (₱)', key: 'actual' },
+                { header: 'Difference (₱)', key: 'difference' },
+                { header: 'Cumulative (₱)', key: 'cumulative' },
+                { header: 'Source', key: 'source' },
+                { header: 'Notes', key: 'notes' }
+            ];
+            
+            let emergencyCumulative = 0;
+            savingsData.emergency.forEach(week => {
+                emergencyCumulative += week.actual;
+                const difference = week.actual - week.target;
+                
+                emergencySheet.addRow({
+                    week: week.week,
+                    startDate: formatDate(week.startDate),
+                    endDate: formatDate(week.endDate),
+                    target: week.target,
+                    actual: week.actual,
+                    difference: difference,
+                    cumulative: emergencyCumulative,
+                    source: week.source,
+                    notes: week.notes
+                });
+            });
+            
+            // Add summary sheet
+            const summarySheet = workbook.addWorksheet('Summary');
+            summarySheet.columns = [
+                { header: 'Metric', key: 'metric' },
+                { header: 'Value', key: 'value' }
+            ];
+            
+            // Calculate summary data
+            const phoneTotal = savingsData.phone.reduce((sum, week) => sum + week.actual, 0);
+            const emergencyTotal = savingsData.emergency.reduce((sum, week) => sum + week.actual, 0);
+            const weeksCompleted = savingsData.phone.filter(week => week.actual > 0).length;
+            
+            summarySheet.addRow({ metric: 'Phone Savings Goal', value: '₱6,000' });
+            summarySheet.addRow({ metric: 'Current Phone Savings', value: `₱${phoneTotal}` });
+            summarySheet.addRow({ metric: 'Phone Progress', value: `${Math.round((phoneTotal / PHONE_GOAL) * 100)}%` });
+            summarySheet.addRow({ metric: 'Emergency Fund Goal', value: '₱2,000' });
+            summarySheet.addRow({ metric: 'Current Emergency Savings', value: `₱${emergencyTotal}` });
+            summarySheet.addRow({ metric: 'Emergency Progress', value: `${Math.round((emergencyTotal / EMERGENCY_GOAL) * 100)}%` });
+            summarySheet.addRow({ metric: 'Weeks Completed', value: `${weeksCompleted}/40` });
+            summarySheet.addRow({ metric: 'Flex Mode Enabled', value: savingsData.flexMode ? 'Yes' : 'No' });
+            summarySheet.addRow({ metric: 'Last Updated', value: new Date().toLocaleString() });
+            
+            // Save workbook
+            workbook.xlsx.writeBuffer().then(buffer => {
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                saveAs(blob, 'savings-tracker.xlsx');
+            });
+        }
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
